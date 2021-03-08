@@ -1,9 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Reactive.Linq;
+
+using Reactive.Bindings;
+
 using Prism.Events;
 using Prism.Mvvm;
-using Reactive.Bindings;
+
+using Unity;
+
+using PrismSample.Lib.Views;
 
 namespace PrismSample.Lib.ViewModels
 {
@@ -12,11 +18,20 @@ namespace PrismSample.Lib.ViewModels
         [Required, Range(-10000, 10000)]
         public ReactiveProperty<string> Operand { get; }
 
+     [Dependency]
+        public IDialogHelper DialogHelper { get; set; }
+
+        public ReactiveCommand<object> ShowDialogCommand { get; }
+
         //Constructor 
         public OperandViewModel(IEventAggregator eventAggregator)
         {
             Operand = new ReactiveProperty<string>("2")
                 .SetValidateAttribute(() => Operand);
+           
+            ShowDialogCommand = new ReactiveCommand(Operand.ObserveHasErrors.Select(x => !x))
+                .WithSubscribe(_ => DialogHelper.ShowDialog($"N = {Operand.Value}"));
+
 
             Observable.WithLatestFrom
             (

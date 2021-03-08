@@ -21,6 +21,7 @@ namespace PrismSample.App.Main
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<IModel, Model>();
+            containerRegistry.Register<IDialogHelper, DialogHelper>();
         }
 
         protected override void ConfigureViewModelLocator()

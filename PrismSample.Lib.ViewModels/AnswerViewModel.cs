@@ -1,8 +1,10 @@
 ﻿using Prism.Events;
 using Prism.Mvvm;
 using Reactive.Bindings;
-using PrismSample.Lib.Models;
 using Unity;
+using PrismSample.Lib.Models;
+using PrismSample.Lib.Views;
+
 
 namespace PrismSample.Lib.ViewModels
 {
@@ -12,6 +14,11 @@ namespace PrismSample.Lib.ViewModels
 
         public ReactiveCommand<object> ShowDialogCommand { get; }
         public IModel model { get; set; }
+       
+        [Dependency]
+        public IDialogHelper DialogHelper { get; set; }
+
+        //public ReactiveCommand<object> anShowDialogCommand { get; }
 
         public AnswerViewModel(IEventAggregator eventAggregator)
         {
@@ -22,6 +29,9 @@ namespace PrismSample.Lib.ViewModels
             eventAggregator
                 .GetEvent<PubSubEvent<double>>()
                 .Subscribe(CalculateAnswer);
+            
+            ShowDialogCommand = new ReactiveCommand()
+                .WithSubscribe(_ => DialogHelper.ShowDialog($"N^2 = {Answer.Value}"));
         }
 
         private void CalculateAnswer(double operand)
